@@ -1,8 +1,6 @@
 import type { zh } from './zh.js'
 
 export const en = {
-  welcomeMessageChat250808: 'How can I help you?',
-  contentCaveat: 'AI-generated, for reference only',
   expandSiderbarButton: 'Open sidebar',
   collapseSiderbarButton: 'Close sidebar',
   newChat: 'New chat',
@@ -14,7 +12,7 @@ export const en = {
     'Chats or attachments have not been saved locally. Retry before closing this page.',
   sessionDeleteFailed: 'Unable to delete this chat. Please try again.',
   settings: 'Settings',
-  appName: 'API usage demo',
+  appName: 'Adventuring ...',
   deleteSessionModalContentTitle: 'Delete chat?',
   deleteSessionWithFilesDescription:
     'This chat and its uploaded files will be permanently deleted and cannot be recovered. Delete this chat?',
@@ -71,11 +69,13 @@ export const en = {
   commonNetworkErrorToast: 'Network Error. Please check your network status.',
   replyInvalidApiKey:
     'The API Key is invalid or has been deleted. Please replace it and try again.',
-  replyInsufficientBalance: 'Insufficient account balance. Please top up and try again.',
+  replyInsufficientBalance:
+    'Insufficient account balance. Please top up and try again.',
   replyRateLimited: 'Too many requests. Please try again later.',
   completionServerBusyToast: 'Server busy, please try again later.',
   unknownError: 'Unknown error',
-  replyRefused: "Sorry, that's beyond my current scope. Let's talk about something else.",
+  replyRefused:
+    "Sorry, that's beyond my current scope. Let's talk about something else.",
   messageThinkDuration: 'Thought for {count} second',
   messageThinkDurationPlural: 'Thought for {count} seconds',
   messageThinkStopped: 'Stopped',
@@ -83,12 +83,16 @@ export const en = {
   groupTitleToolOpen: 'Browsing the web',
   messageThinking: 'Thinking',
   backupInvalidJson: 'The file is not valid JSON.',
-  backupUnrecognized: 'File not recognized. Please choose a DeepSeek chat history ZIP.',
-  backupNewerVersion: 'This file uses a newer version. Please update the app before importing.',
+  backupUnrecognized:
+    'File not recognized. Please choose a DeepSeek chat history ZIP.',
+  backupNewerVersion:
+    'This file uses a newer version. Please update the app before importing.',
   backupInvalidVersion: 'The file version is invalid and cannot be imported.',
   backupIncomplete: 'The file is incomplete and cannot be imported.',
-  backupInvalidBranches: 'The message branches in this file are corrupted and cannot be imported.',
-  backupInvalidFiles: 'The attachment data in this file is corrupted and cannot be imported.',
+  backupInvalidBranches:
+    'The message branches in this file are corrupted and cannot be imported.',
+  backupInvalidFiles:
+    'The attachment data in this file is corrupted and cannot be imported.',
   settingsLocalePreference: 'Language',
   settingsTtsVoice: 'Read-aloud voice',
   settingsTtsVoiceStella: 'Stella (female)',
@@ -127,7 +131,8 @@ export const en = {
     'Includes all chat history and locally stored images. Other attachments retain file details only. Your API Key is not included.',
   exportAllDownload: 'Download',
   deleteAllSessions: 'Delete all chats',
-  deleteAllSessionsModalTitle: 'Once deleted, all chats will be cleared and cannot be recovered.',
+  deleteAllSessionsModalTitle:
+    'Once deleted, all chats will be cleared and cannot be recovered.',
   deleteAllSessionsModalDescription:
     'Locally saved attachments and unsent drafts will also be deleted.',
   historyDeleting: 'Deleting...',
@@ -139,13 +144,15 @@ export const en = {
   uploadFileStatusFailed: 'Upload failed',
   uploadRetry: '{message}. Click to retry',
   chatInputPlaceholderChat: 'Enter a message',
-  deactivatedThinkTooltip: 'Think before responding to solve reasoning problems',
+  deactivatedThinkTooltip:
+    'Think before responding to solve reasoning problems',
   thinkingSwitch: 'DeepThink',
   deactivatedSearchTooltip: 'Search the web when necessary',
   search: 'Search',
   uploadFile: 'Upload files',
   chatInputStopButtonTooltip: 'Stop',
-  uploadMaxMBSize: 'File exceeds the size limit ({size} MB). Please adjust and try again.',
+  uploadMaxMBSize:
+    'File exceeds the size limit ({size} MB). Please adjust and try again.',
   uploadMaxFiles: 'You can upload up to {count} files',
   uploadFileStatusUploading: 'Uploading...',
   uploadServerBusy: 'Server busy',

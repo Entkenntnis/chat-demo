@@ -5,6 +5,9 @@
   box-sizing: border-box;
   height: 60px;
   padding: 12px 10px 4px;
+  color: #000;
+  --dsw-alias-label-primary: #000;
+  --dsw-alias-label-tertiary: rgba(0, 0, 0, 0.66);
 }
 
 .title {
@@ -15,5 +18,5 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   font: var(--dsw-font-s-strong-14);
-  color: var(--dsw-alias-label-primary);
+  color: #000;
 }

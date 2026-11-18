@@ -30,8 +30,50 @@
 }
 
 .column {
-  width: calc(var(--message-list-max-width) - 2 * var(--message-list-padding-horizontal));
-  max-width: calc(100% - 40px);
-  margin: 0 auto;
+  width: calc(
+    var(--message-list-max-width) - 2 * var(--message-list-padding-horizontal)
+  );
+  max-width: calc(100% - var(--chat-panel-inset) - 16px);
+  margin: 0 0 0 var(--chat-panel-inset);
   padding-bottom: 24px;
+}
+
+/* 消息区半透明面板：压暗背景以保证文字与操作图标清晰 */
+.panel {
+  box-sizing: border-box;
+  margin-top: 16px;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  border-radius: 24px;
+  background-color: var(--dsw-specific-chat-panel);
+  backdrop-filter: blur(4px);
+  --dsw-alias-label-primary: #000;
+  --dsw-alias-label-secondary: rgba(0, 0, 0, 0.78);
+  --dsw-alias-label-tertiary: rgba(0, 0, 0, 0.66);
+  --dsw-alias-label-caption: rgba(0, 0, 0, 0.55);
+  --dsw-alias-bg-base: rgba(255, 255, 255, 0.9);
+  --dsw-specific-bubble: rgba(219, 234, 254, 0.95);
+  --dsw-alias-brand-text: rgb(57, 100, 254);
+  --dsw-alias-label-dimmed: rgba(0, 0, 0, 0.12);
+  --dsw-alias-border-l2: rgba(0, 0, 0, 0.12);
+  --dsw-alias-interactive-bg-hover: rgba(0, 0, 0, 0.06);
+  --dsw-alias-interactive-bg-active: rgba(0, 0, 0, 0.1);
+  --dsw-alias-markdown-citation: rgba(0, 0, 0, 0.06);
+  --dsw-alias-markdown-code-block: rgba(0, 0, 0, 0.05);
+  --dsw-alias-markdown-code-block-banner: rgba(0, 0, 0, 0.04);
+  --dsw-alias-markdown-inline-code: rgba(0, 0, 0, 0.07);
+  --dsw-alias-markdown-placeholder: rgba(0, 0, 0, 0.05);
+  --dsw-alias-markdown-tag: rgba(0, 0, 0, 0.06);
+}
+
+@media not all and (min-width: 768px) {
+  .column {
+    margin: 0 auto;
+  }
+
+  .panel {
+    margin-top: 4px;
+    padding: 16px;
+    border-radius: 20px;
+  }
 }

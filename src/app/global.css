@@ -1,12 +1,14 @@
 :root {
   --message-list-max-width: 840px;
   --message-list-padding-horizontal: 44px;
+  --chat-panel-inset: 24px;
 }
 
 @media (max-width: 1023px) {
   :root {
     --message-list-max-width: 712px;
     --message-list-padding-horizontal: 36px;
+    --chat-panel-inset: 20px;
   }
 }
 

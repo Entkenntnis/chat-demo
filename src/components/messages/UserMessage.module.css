@@ -4,10 +4,6 @@
   align-items: flex-end;
   padding-bottom: 16px;
 
-  &.isFirst {
-    padding-top: 34px;
-  }
-
   &:hover .actions {
     opacity: 1;
   }
@@ -35,7 +31,7 @@
   font-size: 16px;
   line-height: 24px;
   color: var(--dsw-alias-label-primary);
-  background-color: var(--dsw-specific-bubble);
+  background-color: #f5e4e4;
   white-space: pre-wrap;
   word-break: break-word;
 }

@@ -18,6 +18,11 @@
   position: relative;
   flex: 1;
   min-height: 0;
+  background-color: var(--dsw-alias-bg-base);
+  background-image: url('../background.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .saveError {

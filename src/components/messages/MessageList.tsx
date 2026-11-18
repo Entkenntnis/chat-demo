@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import clsx from 'clsx'
 import { useIsMobile } from '../../app/viewport.js'
 import {
   buildMessageVersions,
@@ -145,7 +146,7 @@ export const MessageList = ({
     <ScrollToBottomContext.Provider value={scrollToBottom}>
       <div ref={isMobile ? undefined : scrollRef} className={styles.container}>
         <div ref={isMobile ? scrollRef : undefined} className={styles.scroll}>
-          <div ref={contentRef} className={styles.column}>
+          <div ref={contentRef} className={clsx(styles.column, messages.length > 0 && styles.panel)}>
             {messages.map((message, index) =>
               message.role === 'user' ? (
                 <UserMessage
