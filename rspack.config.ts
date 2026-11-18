@@ -5,10 +5,15 @@ import { defineConfig } from '@rspack/cli'
 import { rspack, type Configuration } from '@rspack/core'
 
 const dev = process.env.NODE_ENV !== 'production'
-const targets = ['chrome >= 105', 'edge >= 105', 'safari >= 16', 'firefox >= 110']
+const targets = [
+  'chrome >= 105',
+  'edge >= 105',
+  'safari >= 16',
+  'firefox >= 110',
+]
 const root = path.dirname(fileURLToPath(import.meta.url))
 const { version } = JSON.parse(
-  readFileSync(new URL('./package.json', import.meta.url), 'utf8')
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 ) as { version: string }
 
 const cssLoader = {
@@ -55,7 +60,12 @@ export const createConfig = ({
     generator: { 'css/module': { localIdentName: '[local]-[hash:6]' } },
     rules: [
       { test: /\.module\.css$/, type: 'css/module', use: [cssLoader] },
-      { test: /\.css$/, exclude: /\.module\.css$/, type: 'css', use: [cssLoader] },
+      {
+        test: /\.css$/,
+        exclude: /\.module\.css$/,
+        type: 'css',
+        use: [cssLoader],
+      },
       {
         test: /\.(j|t)sx?$/,
         exclude: /[\\/]node_modules[\\/]/,
@@ -78,11 +88,14 @@ export const createConfig = ({
     new rspack.HtmlRspackPlugin({
       template: './src/index.html',
       scriptLoading: 'defer',
+      favicon: path.resolve(root, 'src/favicon.png'),
       meta: { 'application-version': version },
     }),
     new rspack.DefinePlugin({ __API_ORIGIN__: JSON.stringify(apiOrigin) }),
     new rspack.CopyRspackPlugin({
-      patterns: [{ from: path.resolve(root, 'LICENSE'), to: 'LICENSE', toType: 'file' }],
+      patterns: [
+        { from: path.resolve(root, 'LICENSE'), to: 'LICENSE', toType: 'file' },
+      ],
     }),
   ],
   performance: { hints: false },
