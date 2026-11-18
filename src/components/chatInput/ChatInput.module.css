@@ -9,9 +9,16 @@
   font-size: 16px;
   line-height: var(--line-height);
   border-radius: 24px;
-  border: 1px solid var(--dsw-alias-border-l2-darkmode-thin);
-  background: var(--dsw-specific-input-major);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: rgba(255, 243, 248, 0.58);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   overflow: hidden;
+
+  [data-ds-dark-theme] & {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(64, 48, 57, 0.55);
+  }
 }
 
 .session {
@@ -196,8 +203,12 @@
   caret-color: var(--dsw-alias-brand-text);
 
   &::placeholder {
-    color: var(--dsw-alias-label-caption);
+    color: rgba(0, 0, 0, 0.55);
     user-select: none;
+  }
+
+  [data-ds-dark-theme] &::placeholder {
+    color: rgba(255, 255, 255, 0.62);
   }
 }
 

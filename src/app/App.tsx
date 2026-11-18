@@ -120,11 +120,7 @@ export const App = () => {
                 </div>
               </div>
             ) : session ? (
-              <SessionView
-                session={session}
-                streaming={streaming}
-                siderCollapsed={siderCollapsed}
-              />
+              <SessionView session={session} streaming={streaming} />
             ) : (
               <Welcome />
             )}
