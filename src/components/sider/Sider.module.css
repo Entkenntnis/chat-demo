@@ -47,8 +47,8 @@
   padding: 0 16px;
   border-radius: 100px;
   border: 1px solid rgba(103, 158, 254, 0);
-  background: var(--dsw-alias-button-elevated-fill);
-  color: var(--dsw-alias-label-primary);
+  background: #b3b3b648;
+  color: black;
   font: inherit;
   font-size: 14px;
   font-weight: 500;
