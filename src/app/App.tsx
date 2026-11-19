@@ -9,6 +9,7 @@ import {
   selectSession,
   useChatStore,
 } from '../services/chat/store.js'
+import { BalanceBadge } from '../components/balance/BalanceBadge.js'
 import { SearchPanel } from '../components/search/SearchPanel.js'
 import { closeSearchPanel } from '../components/search/searchPanelState.js'
 import { SessionView } from '../components/session/SessionView.js'
@@ -93,6 +94,7 @@ export const App = () => {
           ) : null}
           <div className={styles.content}>
             {siderCollapsed ? <CollapsedSider /> : null}
+            <BalanceBadge />
             {!ready || (activeId !== null && !session) ? (
               <div className={styles.loadingView}>
                 {isMobile ? <MobileHeader /> : null}

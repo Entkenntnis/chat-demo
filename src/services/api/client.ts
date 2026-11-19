@@ -7,6 +7,7 @@ import type {
   FileObject,
   FilePurpose,
   MessageStreamEvent,
+  UserBalance,
 } from './types.js'
 
 /** 构建期 API 地址，默认 https://api.deepseek.com；本地开发支持开发服务器代理 */
@@ -96,6 +97,19 @@ export const verifyApiKey = async (apiKey: string, signal?: AbortSignal): Promis
     headers: { Authorization: `Bearer ${apiKey}` },
     signal,
   })
+}
+
+/**
+ * GET /user/balance 读取账户余额（不产生费用）。
+ * 浏览器直连需要接口返回 CORS 头，DeepSeek 已放开该接口。
+ */
+export const fetchBalance = async (apiKey: string, signal?: AbortSignal): Promise<UserBalance> => {
+  const response = await request(`${API_ORIGIN}/user/balance`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${apiKey}`, Accept: 'application/json' },
+    signal,
+  })
+  return (await response.json()) as UserBalance
 }
 
 /**

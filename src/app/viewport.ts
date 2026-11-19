@@ -10,6 +10,16 @@ const subscribe = (onChange: () => void) => {
 
 export const useIsMobile = () => useSyncExternalStore(subscribe, () => query.matches)
 
+/** 宽于 1200px 才显示右上/右下角等桌面辅助信息 */
+const wideQuery = window.matchMedia('(min-width: 1200px)')
+
+const subscribeWide = (onChange: () => void) => {
+  wideQuery.addEventListener('change', onChange)
+  return () => wideQuery.removeEventListener('change', onChange)
+}
+
+export const useIsWideScreen = () => useSyncExternalStore(subscribeWide, () => wideQuery.matches)
+
 const preventPageScroll = (event: TouchEvent) => {
   if (event.touches.length !== 1) {
     return

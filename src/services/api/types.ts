@@ -269,6 +269,20 @@ export type FileObject = {
   mime_type: string
 }
 
+/** GET /user/balance 中的单个币种余额，数值均为两位小数组成的字符串 */
+export type BalanceInfo = {
+  currency: 'CNY' | 'USD'
+  total_balance: string
+  granted_balance: string
+  topped_up_balance: string
+}
+
+/** GET /user/balance 的响应；余额不足时 is_available 为 false，但接口本身仍返回 200 */
+export type UserBalance = {
+  is_available: boolean
+  balance_infos: BalanceInfo[]
+}
+
 /** 非 2xx 响应体；流中出现只含 error 的无名 data 帧时同样按此解析 */
 export type ApiErrorBody = {
   error: {
