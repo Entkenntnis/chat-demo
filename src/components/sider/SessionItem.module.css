@@ -46,6 +46,7 @@
   min-width: 0;
   white-space: nowrap;
   text-overflow: ellipsis;
+  overflow: hidden;
   line-height: 18px;
   color: #d24e4e;
 }
