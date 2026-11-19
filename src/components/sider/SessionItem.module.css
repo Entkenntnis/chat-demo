@@ -52,7 +52,7 @@
 
 /* 选中态沿用原有的高对比文字颜色 */
 .item.active .title {
-  color: black;
+  color: #d24e4e;
 }
 
 .action {
