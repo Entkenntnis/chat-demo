@@ -4,6 +4,10 @@
   display: flex;
   overflow: hidden;
   background-color: var(--dsw-alias-bg-base);
+  background-image: url('../background.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .main {
@@ -18,11 +22,6 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  background-color: var(--dsw-alias-bg-base);
-  background-image: url('../background.jpg');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
 }
 
 .saveError {
@@ -55,6 +54,12 @@
   color: var(--dsw-alias-label-secondary);
   font-size: 14px;
   text-align: center;
+}
+
+@media (min-width: 1200px) {
+  .frame {
+    background-position: left center;
+  }
 }
 
 @media not all and (min-width: 768px) {
