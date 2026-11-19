@@ -298,12 +298,12 @@
   }
 
   &.selected {
-    background-color: #4c3030d7;
+    background-color: #d48d8dd7;
     color: #d24e4e;
-    border-color: #452e2ec0;
+    border-color: transparent;
 
     &:hover {
-      background-color: #5b3434;
+      background-color: #d7a1a1d7;
     }
   }
 }

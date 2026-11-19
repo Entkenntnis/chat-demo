@@ -97,7 +97,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--dsw-alias-brand-primary);
+  background: #d24e4e;
   animation: pulse 1.5s linear infinite;
 
   &.inactive {

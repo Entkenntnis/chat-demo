@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import clsx from 'clsx'
 import { useIsMobile } from '../../app/viewport.js'
 import {
@@ -31,7 +38,7 @@ const getUploadRetryId = (messages: Message[], streaming: boolean) => {
 import styles from './MessageList.module.css'
 
 /** 距底部小于该值时视为在底部，流式内容增长时跟随 */
-const STICKY_THRESHOLD = 40
+const STICKY_THRESHOLD = 20
 const EMPTY_VERSIONS: MessageVersions = { ids: [], index: -1 }
 
 export const MessageList = ({
@@ -48,14 +55,16 @@ export const MessageList = ({
   const contentRef = useRef<HTMLDivElement>(null)
   const stickyRef = useRef(true)
   const scrollTopRef = useRef(0)
-  const restoreScrollRef = useRef<{ messageId: string; top: number } | null>(null)
+  const restoreScrollRef = useRef<{ messageId: string; top: number } | null>(
+    null,
+  )
   const messages = getVisibleMessages(session)
   const [previousVersions, setPreviousVersions] = useState(() =>
-    buildMessageVersions(session, new Map())
+    buildMessageVersions(session, new Map()),
   )
   const versions = useMemo(
     () => buildMessageVersions(session, previousVersions),
-    [session, previousVersions]
+    [session, previousVersions],
   )
   if (versions !== previousVersions) {
     setPreviousVersions(versions)
@@ -88,7 +97,7 @@ export const MessageList = ({
     const scroll = scrollRef.current
     if (anchor && scroll) {
       const switcher = scroll.querySelector<HTMLElement>(
-        `[data-message-version="${CSS.escape(anchor.messageId)}"]`
+        `[data-message-version="${CSS.escape(anchor.messageId)}"]`,
       )
       if (switcher) {
         scroll.scrollTop += switcher.getBoundingClientRect().top - anchor.top
@@ -112,7 +121,7 @@ export const MessageList = ({
       closeSearchPanel()
       selectMessageVersion(session.id, messageId)
     },
-    [session.id, streaming]
+    [session.id, streaming],
   )
 
   // 跨移动端断点时切换滚动层，并保持输入框及当前阅读位置。
@@ -127,7 +136,8 @@ export const MessageList = ({
       el.scrollTop = scrollTopRef.current
     }
     const onScroll = () => {
-      const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < STICKY_THRESHOLD
+      const nearBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight < STICKY_THRESHOLD
       // 仅在用户向上滚动时停止跟随底部，布局或内容增高时保持跟随状态。
       if (nearBottom) {
         stickyRef.current = true
@@ -146,7 +156,10 @@ export const MessageList = ({
     <ScrollToBottomContext.Provider value={scrollToBottom}>
       <div ref={isMobile ? undefined : scrollRef} className={styles.container}>
         <div ref={isMobile ? scrollRef : undefined} className={styles.scroll}>
-          <div ref={contentRef} className={clsx(styles.column, messages.length > 0 && styles.panel)}>
+          <div
+            ref={contentRef}
+            className={clsx(styles.column, messages.length > 0 && styles.panel)}
+          >
             {messages.map((message, index) =>
               message.role === 'user' ? (
                 <UserMessage
@@ -171,7 +184,7 @@ export const MessageList = ({
                   versions={versions.get(message.id) ?? EMPTY_VERSIONS}
                   onSelectVersion={selectVersion}
                 />
-              )
+              ),
             )}
           </div>
         </div>

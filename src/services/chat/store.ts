@@ -2,10 +2,24 @@ import { create } from 'zustand'
 import { createId } from '../../utils/id.js'
 import { ApiError, streamMessage } from '../api/client.js'
 import type { ChatModel, CreateMessageRequest } from '../api/types.js'
-import { extractFileIds, getFileErrorCode, isRetryableApiError } from '../api/errors.js'
-import { cancelUpload, describeUploadError, uploadAttachment, useUploads } from '../attachments.js'
+import {
+  extractFileIds,
+  getFileErrorCode,
+  isRetryableApiError,
+} from '../api/errors.js'
+import {
+  cancelUpload,
+  describeUploadError,
+  uploadAttachment,
+  useUploads,
+} from '../attachments.js'
 import { useSettings } from '../settings.js'
-import { appendBranch, getVisibleMessages, normalizeSession, selectVersion } from './branches.js'
+import {
+  appendBranch,
+  getVisibleMessages,
+  normalizeSession,
+  selectVersion,
+} from './branches.js'
 import * as db from './db.js'
 import {
   clearAllDrafts,
@@ -103,7 +117,9 @@ const getStreamController = (id: string) => {
 }
 
 const sameSummary = (a: SessionSummary, b: SessionSummary) =>
-  a.title === b.title && a.createdAt === b.createdAt && a.updatedAt === b.updatedAt
+  a.title === b.title &&
+  a.createdAt === b.createdAt &&
+  a.updatedAt === b.updatedAt
 
 const sessionAccess = new Map<string, number>()
 const unsavedSessions = new Set<string>()
@@ -131,7 +147,7 @@ const trimSessionCache = () => {
         id !== state.activeId &&
         !Object.hasOwn(state.streaming, id) &&
         !unsavedSessions.has(id) &&
-        !deletingSessions.has(id)
+        !deletingSessions.has(id),
     )
     .sort((a, b) => (sessionAccess.get(a) ?? 0) - (sessionAccess.get(b) ?? 0))
   const evicted = new Set(removable.slice(0, ids.length - SESSION_CACHE_LIMIT))
@@ -141,7 +157,7 @@ const trimSessionCache = () => {
   if (evicted.size > 0) {
     set({
       sessionCache: Object.fromEntries(
-        Object.entries(state.sessionCache).filter(([id]) => !evicted.has(id))
+        Object.entries(state.sessionCache).filter(([id]) => !evicted.has(id)),
       ),
     })
   }
@@ -149,7 +165,9 @@ const trimSessionCache = () => {
 
 const updateSession = (id: string, update: (session: Session) => Session) =>
   set((state) => {
-    const previous = Object.hasOwn(state.sessionCache, id) ? state.sessionCache[id] : undefined
+    const previous = Object.hasOwn(state.sessionCache, id)
+      ? state.sessionCache[id]
+      : undefined
     if (!previous) {
       return state
     }
@@ -163,8 +181,8 @@ const updateSession = (id: string, update: (session: Session) => Session) =>
         ? state.sessions
         : sortSessions(
             state.sessions.map((summary) =>
-              summary.id === id ? toSessionSummary(session) : summary
-            )
+              summary.id === id ? toSessionSummary(session) : summary,
+            ),
           ),
     }
   })
@@ -174,8 +192,12 @@ const updateReply = (sessionId: string, reply: AssistantMessage) =>
     ...session,
     messages: session.messages.map((message) =>
       message.id === reply.id
-        ? { ...reply, parentId: message.parentId, selectedChildId: message.selectedChildId }
-        : message
+        ? {
+            ...reply,
+            parentId: message.parentId,
+            selectedChildId: message.selectedChildId,
+          }
+        : message,
     ),
   }))
 
@@ -201,7 +223,9 @@ const persist = (sessionId: string) => {
           unsavedSessions.delete(sessionId)
           set((state) => ({
             sessionSaveErrors: Object.fromEntries(
-              Object.entries(state.sessionSaveErrors).filter(([id]) => id !== sessionId)
+              Object.entries(state.sessionSaveErrors).filter(
+                ([id]) => id !== sessionId,
+              ),
             ),
           }))
           trimSessionCache()
@@ -211,7 +235,10 @@ const persist = (sessionId: string) => {
         db.reportStorageError('save session')(error)
         if (epoch === historyEpoch && getSession(sessionId)) {
           set((state) => ({
-            sessionSaveErrors: { ...state.sessionSaveErrors, [sessionId]: true },
+            sessionSaveErrors: {
+              ...state.sessionSaveErrors,
+              [sessionId]: true,
+            },
           }))
         }
       })
@@ -273,7 +300,9 @@ const createReply = (): AssistantMessage => {
 const settleInterrupted = (session: Session): Session => {
   if (
     !session.messages.some(
-      (m) => m.role === 'assistant' && (m.status === 'pending' || m.status === 'streaming')
+      (m) =>
+        m.role === 'assistant' &&
+        (m.status === 'pending' || m.status === 'streaming'),
     )
   ) {
     return session
@@ -281,9 +310,10 @@ const settleInterrupted = (session: Session): Session => {
   return {
     ...session,
     messages: session.messages.map((m) =>
-      m.role === 'assistant' && (m.status === 'pending' || m.status === 'streaming')
+      m.role === 'assistant' &&
+      (m.status === 'pending' || m.status === 'streaming')
         ? settleReply(m, 'stopped', session.updatedAt)
-        : m
+        : m,
     ),
   }
 }
@@ -327,7 +357,9 @@ const ensureSessionLoaded = (id: string): Promise<void> => {
     return pending.promise
   }
   const epoch = historyEpoch
-  set((state) => ({ sessionLoadErrors: { ...state.sessionLoadErrors, [id]: false } }))
+  set((state) => ({
+    sessionLoadErrors: { ...state.sessionLoadErrors, [id]: false },
+  }))
   const load = { promise: Promise.resolve() }
   sessionLoads.set(id, load)
   load.promise = (async () => {
@@ -345,16 +377,22 @@ const ensureSessionLoaded = (id: string): Promise<void> => {
       }
       const settled = settleInterrupted(normalizeSession(stored))
       // 读取期间可能已在列表重命名，保留最新元数据，不能让旧读取覆盖它。
-      const session = sameSummary(settled, summary) ? settled : { ...settled, ...summary }
+      const session = sameSummary(settled, summary)
+        ? settled
+        : { ...settled, ...summary }
       touchSession(id)
-      set((state) => ({ sessionCache: { ...state.sessionCache, [id]: session } }))
+      set((state) => ({
+        sessionCache: { ...state.sessionCache, [id]: session },
+      }))
       if (session !== stored) {
         persist(id)
       }
       trimSessionCache()
     } catch (error) {
       if (epoch === historyEpoch && sessionLoads.get(id) === load) {
-        set((state) => ({ sessionLoadErrors: { ...state.sessionLoadErrors, [id]: true } }))
+        set((state) => ({
+          sessionLoadErrors: { ...state.sessionLoadErrors, [id]: true },
+        }))
         db.reportStorageError('read session')(error)
       }
     } finally {
@@ -389,7 +427,9 @@ const waitForIdle = (sessionId?: string) =>
  * 替换历史对话：先写入暂存，成功后原子替换旧记录；写入为空即删除全部会话与附件。
  * 期间停止生成并禁止修改会话；失败时清除暂存，保留原有记录。
  */
-export const replaceHistory = async (write: () => Promise<void>): Promise<number> => {
+export const replaceHistory = async (
+  write: () => Promise<void>,
+): Promise<number> => {
   if (get().importingHistory) {
     throw new Error('History replacement is already in progress')
   }
@@ -410,7 +450,9 @@ export const replaceHistory = async (write: () => Promise<void>): Promise<number
       await write()
       summaries = await db.commitStaging()
     } catch (error) {
-      await db.clearStaging().catch(db.reportStorageError('clear unfinished history replacement'))
+      await db
+        .clearStaging()
+        .catch(db.reportStorageError('clear unfinished history replacement'))
       throw error
     }
     sessionAccess.clear()
@@ -448,7 +490,10 @@ export const newChat = () => {
 }
 
 export const selectSession = (id: string) => {
-  if (!get().importingHistory && get().sessions.some((session) => session.id === id)) {
+  if (
+    !get().importingHistory &&
+    get().sessions.some((session) => session.id === id)
+  ) {
     touchSession(id)
     set({ activeId: id })
     void ensureSessionLoaded(id)
@@ -470,10 +515,12 @@ export const renameSession = (id: string, title: string) => {
   } else {
     set((state) => ({
       sessions: state.sessions.map((session) =>
-        session.id === id ? { ...session, title } : session
+        session.id === id ? { ...session, title } : session,
       ),
     }))
-    void db.renameSession(id, title).catch(db.reportStorageError('rename session'))
+    void db
+      .renameSession(id, title)
+      .catch(db.reportStorageError('rename session'))
   }
 }
 
@@ -512,13 +559,13 @@ const removeSessionData = async (id: string): Promise<boolean> => {
     set((state) => ({
       sessions: state.sessions.filter((session) => session.id !== id),
       sessionCache: Object.fromEntries(
-        Object.entries(state.sessionCache).filter(([key]) => key !== id)
+        Object.entries(state.sessionCache).filter(([key]) => key !== id),
       ),
       sessionLoadErrors: Object.fromEntries(
-        Object.entries(state.sessionLoadErrors).filter(([key]) => key !== id)
+        Object.entries(state.sessionLoadErrors).filter(([key]) => key !== id),
       ),
       sessionSaveErrors: Object.fromEntries(
-        Object.entries(state.sessionSaveErrors).filter(([key]) => key !== id)
+        Object.entries(state.sessionSaveErrors).filter(([key]) => key !== id),
       ),
       activeId: state.activeId === id ? null : state.activeId,
     }))
@@ -539,7 +586,8 @@ const removeSessionData = async (id: string): Promise<boolean> => {
   }
 }
 
-export const stopReply = (sessionId: string) => getStreamController(sessionId)?.abort()
+export const stopReply = (sessionId: string) =>
+  getStreamController(sessionId)?.abort()
 
 /**
  * 提交指定会话的最新草稿；null 表示新建会话。
@@ -549,7 +597,10 @@ export const sendMessage = (targetSessionId: string | null) => {
   if (get().importingHistory || !get().ready) {
     return false
   }
-  const prepared = prepareDraftMessage(getDraft(targetSessionId), useUploads.getState().tasks)
+  const prepared = prepareDraftMessage(
+    getDraft(targetSessionId),
+    useUploads.getState().tasks,
+  )
   if (!prepared) {
     return false
   }
@@ -558,7 +609,9 @@ export const sendMessage = (targetSessionId: string | null) => {
   let sessionId = targetSessionId
   if (
     sessionId !== null &&
-    (deletingSessions.has(sessionId) || getStreamController(sessionId) || !getSession(sessionId))
+    (deletingSessions.has(sessionId) ||
+      getStreamController(sessionId) ||
+      !getSession(sessionId))
   ) {
     return false
   }
@@ -626,7 +679,9 @@ export const regenerateReply = (sessionId: string, messageId?: string) => {
   }
   const path = getVisibleMessages(session)
   const index =
-    messageId === undefined ? path.length - 1 : path.findIndex((m) => m.id === messageId)
+    messageId === undefined
+      ? path.length - 1
+      : path.findIndex((m) => m.id === messageId)
   const question = path[index - 1]
   if (question?.role !== 'user' || path[index]?.role !== 'assistant') {
     return
@@ -642,7 +697,11 @@ export const regenerateReply = (sessionId: string, messageId?: string) => {
 }
 
 /** 编辑提问后新增同父版本，保留原文件；旧问题的所有回答与后续对话仍可切回。 */
-export const editMessage = (sessionId: string, messageId: string, content: string): boolean => {
+export const editMessage = (
+  sessionId: string,
+  messageId: string,
+  content: string,
+): boolean => {
   if (get().importingHistory || deletingSessions.has(sessionId)) {
     return false
   }
@@ -670,7 +729,10 @@ export const editMessage = (sessionId: string, messageId: string, content: strin
     updatedAt: Date.now(),
   }))
   persist(sessionId)
-  void streamReply(sessionId, reply, { history: path.slice(0, index), question })
+  void streamReply(sessionId, reply, {
+    history: path.slice(0, index),
+    question,
+  })
   return true
 }
 
@@ -720,7 +782,11 @@ export const continueReply = (sessionId: string, messageId: string) => {
   updateReply(sessionId, reply)
   updateSession(sessionId, (s) => ({ ...s, updatedAt: Date.now() }))
   persist(sessionId)
-  void streamReply(sessionId, reply, { history: path.slice(0, -2), question, prefix: previous })
+  void streamReply(sessionId, reply, {
+    history: path.slice(0, -2),
+    question,
+    prefix: previous,
+  })
 }
 
 /** 附件补传失败后重试：保留原回答位置，重新补传并请求 */
@@ -743,13 +809,24 @@ export const retryUpload = (sessionId: string, messageId: string) => {
   ) {
     return
   }
-  const reply: AssistantMessage = { ...previous, status: 'pending', error: undefined }
+  const reply: AssistantMessage = {
+    ...previous,
+    status: 'pending',
+    error: undefined,
+  }
   updateReply(sessionId, reply)
   persist(sessionId)
-  void streamReply(sessionId, reply, { history: path.slice(0, index - 1), question })
+  void streamReply(sessionId, reply, {
+    history: path.slice(0, index - 1),
+    question,
+  })
 }
 
-type Request = { history: Message[]; question: UserMessage; prefix?: AssistantMessage }
+type Request = {
+  history: Message[]
+  question: UserMessage
+  prefix?: AssistantMessage
+}
 
 /** 把补传得到的 serverId 写回会话里所有引用同一附件的消息（编辑、重新生成会共用附件） */
 const saveServerIds = (sessionId: string, serverIds: Map<string, string>) => {
@@ -759,14 +836,17 @@ const saveServerIds = (sessionId: string, serverIds: Map<string, string>) => {
   updateSession(sessionId, (session) => ({
     ...session,
     messages: session.messages.map((message) =>
-      message.role === 'user' && message.files.some((file) => serverIds.has(file.id))
+      message.role === 'user' &&
+      message.files.some((file) => serverIds.has(file.id))
         ? {
             ...message,
             files: message.files.map((file) =>
-              serverIds.has(file.id) ? { ...file, serverId: serverIds.get(file.id) ?? null } : file
+              serverIds.has(file.id)
+                ? { ...file, serverId: serverIds.get(file.id) ?? null }
+                : file,
             ),
           }
-        : message
+        : message,
     ),
   }))
   persist(sessionId)
@@ -776,7 +856,10 @@ const saveServerIds = (sessionId: string, serverIds: Map<string, string>) => {
  * 附件的服务端 id：已有直接用；正在上传的等待同一任务；否则读取本地原件补传。
  * 本地也没有原件（导入的文档附件只有元数据）时返回 null，该附件只展示、不进入请求。
  */
-const ensureServerId = async (apiKey: string, file: FileAttachment): Promise<string | null> => {
+const ensureServerId = async (
+  apiKey: string,
+  file: FileAttachment,
+): Promise<string | null> => {
   if (file.serverId) {
     return file.serverId
   }
@@ -813,7 +896,11 @@ const refreshRequest = (sessionId: string, request: Request): Request => {
  * - 历史轮次（仅进入上下文的）中没有 serverId 的附件，多为导入的图片：从最新的消息往前逐张补传，
  *   失败静默跳过，该附件不进入本次请求，下次发送时再试。
  */
-const prepareFiles = async (sessionId: string, request: Request, signal: AbortSignal) => {
+const prepareFiles = async (
+  sessionId: string,
+  request: Request,
+  signal: AbortSignal,
+) => {
   const epoch = historyEpoch
   // 服务端判定 file_id 失效时会清掉会话里的 serverId，先用最新消息替换请求快照，
   // 否则快照里仍是旧 id，补传会直接复用它。
@@ -822,7 +909,9 @@ const prepareFiles = async (sessionId: string, request: Request, signal: AbortSi
   const serverIds = new Map<string, string>()
   // 停止生成立即生效；上传本身不取消（输入框与其他消息可能共用同一任务），完成后照常写回 serverId
   const aborted = new Promise<never>((_, reject) => {
-    signal.addEventListener('abort', () => reject(signal.reason), { once: true })
+    signal.addEventListener('abort', () => reject(signal.reason), {
+      once: true,
+    })
   })
   const uploads = Promise.allSettled(
     request.question.files.map(async (file) => {
@@ -830,7 +919,7 @@ const prepareFiles = async (sessionId: string, request: Request, signal: AbortSi
       if (serverId) {
         serverIds.set(file.id, serverId)
       }
-    })
+    }),
   )
   void uploads.then(() => {
     if (epoch === historyEpoch) {
@@ -854,7 +943,10 @@ const prepareFiles = async (sessionId: string, request: Request, signal: AbortSi
   for (const file of pending.values()) {
     signal.throwIfAborted()
     try {
-      const serverId = await Promise.race([ensureServerId(apiKey, file), aborted])
+      const serverId = await Promise.race([
+        ensureServerId(apiKey, file),
+        aborted,
+      ])
       if (serverId) {
         serverIds.set(file.id, serverId)
         saveServerIds(sessionId, new Map([[file.id, serverId]]))
@@ -867,7 +959,8 @@ const prepareFiles = async (sessionId: string, request: Request, signal: AbortSi
   // 用补齐后的会话重新取历史与提问，保证请求里都是 serverId
   const session = getSession(sessionId)
   const resolve = <T extends Message>(message: T): T =>
-    (session?.messages.find((m) => m.id === message.id) as T | undefined) ?? message
+    (session?.messages.find((m) => m.id === message.id) as T | undefined) ??
+    message
   return {
     history: request.history.map(resolve),
     question: resolve(request.question),
@@ -897,7 +990,11 @@ const collectServerFileIds = (request: Request): Set<string> => {
  * 下一次补齐会重新读取本地原件上传。报错里点名了 file_id 就只重置这些，
  * 没点名（如 invalid file_id）则重置本次请求用到的全部附件。
  */
-const reuploadInvalidatedFiles = (sessionId: string, request: Request, error: unknown): boolean => {
+const reuploadInvalidatedFiles = (
+  sessionId: string,
+  request: Request,
+  error: unknown,
+): boolean => {
   if (!(error instanceof ApiError) || !getFileErrorCode(error)) {
     return false
   }
@@ -949,7 +1046,7 @@ const waitForRetry = (attempt: number, signal: AbortSignal) =>
         signal.removeEventListener('abort', onAbort)
         resolve()
       },
-      FILE_RETRY_BASE_DELAY * 2 ** attempt
+      FILE_RETRY_BASE_DELAY * 2 ** attempt,
     )
     signal.addEventListener('abort', onAbort, { once: true })
   })
@@ -959,12 +1056,18 @@ const waitForRetry = (attempt: number, signal: AbortSignal) =>
  * 补传失败时回复记为 upload 错误，可重试。
  * 服务端判定 file_id 失效时重新补传后重发，退避重试且次数有上限，超过则按原始报错收尾。
  */
-const streamReply = async (sessionId: string, initial: AssistantMessage, request: Request) => {
+const streamReply = async (
+  sessionId: string,
+  initial: AssistantMessage,
+  request: Request,
+) => {
   const controller = new AbortController()
   if (!getSession(sessionId)?.title) {
     titleRequests.add(controller)
   }
-  set((state) => ({ streaming: { ...state.streaming, [sessionId]: controller } }))
+  set((state) => ({
+    streaming: { ...state.streaming, [sessionId]: controller },
+  }))
   let reply = initial
   let frame = 0
   const flush = () => {
@@ -980,7 +1083,11 @@ const streamReply = async (sessionId: string, initial: AssistantMessage, request
       let preparing = true
       let receivedContent = false
       try {
-        const prepared = await prepareFiles(sessionId, request, controller.signal)
+        const prepared = await prepareFiles(
+          sessionId,
+          request,
+          controller.signal,
+        )
         preparing = false
         // 附件就绪后获取本轮信息；续写沿用原回答快照，重新生成的快照独立保存。
         const latestReminder = prepared.prefix
@@ -994,7 +1101,7 @@ const streamReply = async (sessionId: string, initial: AssistantMessage, request
           prepared.question,
           prepared.prefix,
           initial.thinking ?? false,
-          latestReminder
+          latestReminder,
         )
         const events = streamMessage(
           useSettings.getState().apiKey ?? '',
@@ -1003,25 +1110,29 @@ const streamReply = async (sessionId: string, initial: AssistantMessage, request
             system: SYSTEM_PROMPT,
             messages,
             thinking: { type: initial.thinking ? 'enabled' : 'disabled' },
-            safety_check: SAFETY_CHECK,
             tools: serverTools(initial.search ?? false),
-            ...(titleRequests.has(controller) ? { title: { enabled: true } } : {}),
+            ...(titleRequests.has(controller)
+              ? { title: { enabled: true } }
+              : {}),
           },
-          controller.signal
+          controller.signal,
         )
         const blockIndexes = new Map<number, number>()
         for await (const event of events) {
           receivedContent ||= event.type === 'content_block_start'
           if (
             event.type === 'message_delta' &&
-            (event.delta.stop_reason === 'end_turn' || event.delta.stop_reason === 'max_tokens') &&
+            (event.delta.stop_reason === 'end_turn' ||
+              event.delta.stop_reason === 'max_tokens') &&
             event.delta.title?.trim() &&
             titleRequests.has(controller) &&
             !controller.signal.aborted &&
             !get().importingHistory
           ) {
             const title = event.delta.title.trim()
-            updateSession(sessionId, (session) => (session.title ? session : { ...session, title }))
+            updateSession(sessionId, (session) =>
+              session.title ? session : { ...session, title },
+            )
             titleRequests.delete(controller)
           }
           reply = applyEvent(reply, event, Date.now(), blockIndexes)
@@ -1060,7 +1171,11 @@ const streamReply = async (sessionId: string, initial: AssistantMessage, request
           }
           continue
         }
-        if (error instanceof ApiError && error.kind === 'interrupted' && reply.stopReason) {
+        if (
+          error instanceof ApiError &&
+          error.kind === 'interrupted' &&
+          reply.stopReason
+        ) {
           // 已收到 message_delta 的结束原因，只是缺了结尾的 message_stop
           reply = settleReply(reply, 'done', Date.now())
         } else if (error instanceof ApiError) {
@@ -1086,7 +1201,7 @@ const streamReply = async (sessionId: string, initial: AssistantMessage, request
     updateReply(sessionId, reply)
     set((state) => ({
       streaming: Object.fromEntries(
-        Object.entries(state.streaming).filter(([id]) => id !== sessionId)
+        Object.entries(state.streaming).filter(([id]) => id !== sessionId),
       ),
     }))
     persist(sessionId)

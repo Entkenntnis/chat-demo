@@ -21,10 +21,18 @@ export type TextCitation = {
 }
 
 /** 文本块：挂过引用的块之后，后续正文另起新块；同一块内引用按 url 去重 */
-export type TextBlock = { type: 'text'; text: string; citations?: TextCitation[] }
+export type TextBlock = {
+  type: 'text'
+  text: string
+  citations?: TextCitation[]
+}
 
 /** 思考块：签名在块结束前经 signature_delta 下发，值为本次响应的消息 id */
-export type ThinkingBlock = { type: 'thinking'; thinking: string; signature: string }
+export type ThinkingBlock = {
+  type: 'thinking'
+  thinking: string
+  signature: string
+}
 
 /** 服务端识别调用所属联网能力用的 kind，区分文字搜索、图搜及边想边搜。 */
 export type ServerToolKind =
@@ -119,7 +127,12 @@ export type ServerToolBlock =
   | WebFetchToolResultBlock
 
 /** 用于识别客户端工具调用的内容块类型 */
-export type ToolUseBlock = { type: 'tool_use'; id: string; name: string; input: unknown }
+export type ToolUseBlock = {
+  type: 'tool_use'
+  id: string
+  name: string
+  input: unknown
+}
 
 // ---------- 请求 ----------
 
@@ -178,7 +191,6 @@ export type CreateMessageRequest = {
   messages: MessageParam[]
   thinking: { type: 'enabled' | 'disabled' }
   tools: (DeepseekWebSearchTool | DeepseekReadUrlTool)[]
-  safety_check: { level: 'high' }
   title?: { enabled: boolean }
 }
 
@@ -200,7 +212,11 @@ export type MessageUsage = {
 }
 
 /** content_block_start 携带的初始内容块；工具块已是完整内容 */
-export type OutputBlockStart = TextBlock | ThinkingBlock | ServerToolBlock | ToolUseBlock
+export type OutputBlockStart =
+  | TextBlock
+  | ThinkingBlock
+  | ServerToolBlock
+  | ToolUseBlock
 
 export type ContentBlockDelta =
   | { type: 'text_delta'; text: string }
@@ -216,7 +232,11 @@ export type MessageStreamEvent =
       /** id 为不带 msg_ 前缀的 UUID，等于响应头 x-ds-request-id */
       message: { id: string; model: string; usage?: MessageUsage }
     }
-  | { type: 'content_block_start'; index: number; content_block: OutputBlockStart }
+  | {
+      type: 'content_block_start'
+      index: number
+      content_block: OutputBlockStart
+    }
   | { type: 'content_block_delta'; index: number; delta: ContentBlockDelta }
   | { type: 'content_block_stop'; index: number }
   | {
